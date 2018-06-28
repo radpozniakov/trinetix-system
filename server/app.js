@@ -1,14 +1,16 @@
-const createError = require('http-errors')
-const config = require('./config/config')
-const express = require('express')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const logger = require('morgan')
-const cors = require('cors')
-const mongoose = require('mongoose').connect(config.db.path)
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-const indexRouter = require('./routes/index')
-const usersRouter = require('./routes/users')
+const session = require('express-session');
+const passport = require('passport');
+
+
+const mongoose = require('mongoose');
+mongoose.connect('localhost:27017/newstructure');
 
 const app = express()
 
@@ -16,15 +18,14 @@ const app = express()
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'pug');
 
-app.use(logger('combined'))
-app.use(cors())
+app.use(logger('dev'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/users', usersRouter)
+app.use('/managers', managerRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
