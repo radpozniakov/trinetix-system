@@ -1,27 +1,9 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
-const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-const ManagerSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 1,
-    unique: true,
-  },
-  password: {
-    type: String,
-    require: true,
-    minlength: 6
-  },
-}, {
-    usePushEach: true
-  });
+const managerSchema = new Schema({
+  name: String,
+  email: String
+}, {collection: 'managers'})
 
-
-let Manager = mongoose.model('Manager', ManagerSchema);
-
-module.exports = { Manager };
+module.exports = mongoose.model('managers', managerSchema)
