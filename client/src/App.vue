@@ -1,77 +1,67 @@
 <template>
-  <v-app>
-    <v-navigation-drawer v-model="sideNav" fixed app>
-      <v-list dense>
-      
-        <v-list-tile v-for="menu in menuItems" :key="menu.title" router :to="menu.link">
-          <v-list-tile-action>
-            <v-icon>{{menu.iconTitle}}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>{{menu.title}}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-      </v-list>
-    </v-navigation-drawer>
-    <v-toolbar color="indigo" dark fixed app>
-      <v-toolbar-side-icon class="hidden-sm-and-up" @click.native.stop="sideNav = !sideNav"></v-toolbar-side-icon>
-     <v-toolbar-title><router-link to="/" tag="span" style="cursor: pointer">Trinetix system</router-link></v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-xs-only">
-        
-        <v-btn v-for="menu in menuItems" :key="menu.title" flat router :to="menu.link">
-          <v-icon left>
-            {{menu.iconTitle}}
-          </v-icon>
-          {{menu.title}}
-        </v-btn>
-        <v-menu offset-y>
-          <v-btn slot="activator" flat>
-              <v-avatar class="mr-2" size="36px">
-                <img src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460" alt="John">
-              </v-avatar>
-            Rad
-          </v-btn>
-
-          <v-list>
-            <v-list-tile>
-              <v-list-tile-title>
-                <v-icon class="mr-2" left>account_circle</v-icon>Profile info</v-list-tile-title>
-            </v-list-tile>
-            
-            <v-list-tile @click="logOut">
-            <v-list-tile-title>
-              <v-icon class="mr-2" left>keyboard_tab</v-icon>Log out</v-list-tile-title>
-            </v-list-tile>
-
-          </v-list>
-        </v-menu>  
-      </v-toolbar-items>
-    </v-toolbar>
+   <v-app v-if=authorizationStatus>
+    <header-component></header-component>
     <v-content>
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-content>
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
+      
+    </v-content>
+    <div>
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+  </div>
+  </v-app>
+  <v-app v-else id="inspire">
+    <login-component></login-component>
+    <div>
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+  </div>
   </v-app>
 </template>
 
 <script>
+import authorization from '@/services/authorization'
+import {mapGetters, mapMutations} from 'vuex';
+import headerComponent from '@/components/header'
+import loginComponent from '@/components/Login'
 export default {
   data () {
     return {
-      sideNav: false,
-      menuItems: [
-        {iconTitle: 'border_clear', title: 'invoices', link: 'invoices'},
-        {iconTitle: 'people', title: 'all users', link: 'users'}
-      ]
+  
     }
   },
   methods: {
-    logOut(){
-    	alert('frv');
-    }
+  
+  },
+  computed:{
+    ...mapGetters([
+        'authorizationStatus',
+    ]),
+  },
+  components:{headerComponent, loginComponent},
+  async beforeCreate(){
+     try{
+      let loginInfo = await authorization.handshake()
+      console.log(loginInfo.data)
+      if(loginInfo.data.manager){
+        let result = {
+          authorized: true,
+          id: loginInfo.data.manager._id,
+          email: loginInfo.data.manager.email,
+          token : loginInfo.data.xAuth
+        }
+      this.$store.commit('authorization', result)
+      }
+     }catch(err){
+       console.log(err)
+     }
+
   }
 }
 </script>

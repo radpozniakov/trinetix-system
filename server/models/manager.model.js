@@ -31,11 +31,11 @@ const ManagerSchema = new mongoose.Schema({
 });
 
 
-ManagerSchema.methods.toJSON = function () {
-	let manager = this;
-  let managerObject = user.toObject();
-	return _.pick(managerObject, ['_id', 'email']);
-};
+// ManagerSchema.methods.toJSON = function () {
+// 	let manager = this;
+//   	let managerObject = manager.toObject();
+// 		return _.pick(managerObject, ['_id', 'email']);
+// };
 
 
 
@@ -52,8 +52,9 @@ ManagerSchema.methods.generateAuthToken = function () {
 };
 
 
-ManagerSchema.methods.removeToken = function (token) {
-    let manager = this;
+ManagerSchema.statics.removeToken = function (token) {
+	let manager = this;
+	
     return manager.update({
         $pull: {
             tokens: {token}

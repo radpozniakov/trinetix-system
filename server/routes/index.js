@@ -3,23 +3,13 @@ const router = express.Router();
 const Manager = require('../models/manager.model')
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' })
+router.get('/t', (req, res, next) => {
+  res.send({manager: req.session.manager, xAuth: req.session.xAuth })
 })
 
-router.post('/test', (req, res, next) => {
-  let body = {
-    name: req.body.name,
-    email: req.body.email
-  }
-  let managerSchema = new Manager(body)
-
-  managerSchema.save().then((x) => {
-    res.send(x)
-  }).catch((error) =>{
-    res.send(error)
-  })
-
-})
+// router.post('/test', (req, res, next) => {
+//   console.log(req.headers['x-auth'])
+//   res.send(req)
+// })
 
 module.exports = router;
