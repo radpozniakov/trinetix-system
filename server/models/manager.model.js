@@ -10,7 +10,11 @@ const ManagerSchema = new mongoose.Schema({
         trim: true,
         minlength: 1,
         unique: true,
-    },
+	},
+	name: {
+		trim: true,
+		type: String,
+	},
     password: {
         type: String,
         require: true,

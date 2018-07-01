@@ -38,6 +38,7 @@ module.exports = {
       req.session.authorized = true;
       req.session.manager = manager;
       req.session.xAuth = token;
+      //console.log(req.session.manager)
       res.send({
         session: req.session,
         token: token

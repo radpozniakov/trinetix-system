@@ -9,6 +9,7 @@ export const store =  new Vuex.Store({
       client: {
         authorized: false,
         token: null,
+        name: '',
         email: '',
         id: ''
       }
@@ -19,6 +20,13 @@ export const store =  new Vuex.Store({
         },
       token(state){
         return state.client.token
+      },
+      currentManager(state){
+        return {
+          email: state.client.email,
+          name: state.client.name,
+          id: state.client.id
+        }
       }
     },
     mutations: {
@@ -26,18 +34,15 @@ export const store =  new Vuex.Store({
           state.client.authorized = payload.authorized
           state.client.token = payload.token
           state.client.email = payload.email
+          state.client.name = payload.name
           state.client.id = payload.id
         },
       logOut(state){
         state.client.authorized = false
         state.client.token = null
         state.client.email = null
+        state.client.name = null
         state.client.id = null
       }  
-    },
-    actions: {
-      authorization (context, payload) {
-          context.commit('authorization', payload)
-        }
-      } 
-    })
+    }
+})

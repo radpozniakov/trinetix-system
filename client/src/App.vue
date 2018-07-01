@@ -1,27 +1,12 @@
 <template>
-   <v-app v-if=authorizationStatus>
-    <header-component></header-component>
+   <v-app>
+    <header-component v-if=authorizationStatus></header-component>
     <v-content>
       <v-container fluid>
         <router-view></router-view>
       </v-container>
-      
     </v-content>
-    <div>
-    <v-progress-circular
-      indeterminate
-      color="primary"
-    ></v-progress-circular>
-  </div>
-  </v-app>
-  <v-app v-else id="inspire">
-    <login-component></login-component>
-    <div>
-    <v-progress-circular
-      indeterminate
-      color="primary"
-    ></v-progress-circular>
-  </div>
+    <footer-component v-if=authorizationStatus></footer-component>
   </v-app>
 </template>
 
@@ -30,6 +15,7 @@ import authorization from '@/services/authorization'
 import {mapGetters, mapMutations} from 'vuex';
 import headerComponent from '@/components/header'
 import loginComponent from '@/components/Login'
+import FooterComponent from '@/components/Footer'
 export default {
   data () {
     return {
@@ -44,7 +30,10 @@ export default {
         'authorizationStatus',
     ]),
   },
-  components:{headerComponent, loginComponent},
+  mounted(){
+      //this.$router.push({path:"/login", params: {logout: true}})
+  },
+  components:{headerComponent, loginComponent, FooterComponent},
   async beforeCreate(){
      try{
       let loginInfo = await authorization.handshake()
@@ -56,12 +45,13 @@ export default {
           email: loginInfo.data.manager.email,
           token : loginInfo.data.xAuth
         }
-      this.$store.commit('authorization', result)
+        this.$store.commit('authorization', result)
+      }else{
+        this.$router.push({path:"/login", params: {logout: true}})  
       }
      }catch(err){
        console.log(err)
      }
-
   }
 }
 </script>
